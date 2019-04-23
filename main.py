@@ -23,6 +23,14 @@ def get_boards():
     return data_handler.get_boards()
 
 
+@app.route("/add-boards")
+def get_boards():
+    """
+    All the boards
+    """
+    data_handler.add_board()
+
+
 @app.route("/get-cards/<int:board_id>")
 @json_response
 def get_cards_for_board(board_id: int):
