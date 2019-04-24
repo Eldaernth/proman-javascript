@@ -11,12 +11,60 @@
         <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='favicon/favicon-96x96.png') }}">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}">
 
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-grid.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+
+        <script src="{{ url_for('static', filename='js/jquery.js') }}" type=text/javascript defer></script>
+        <script src="{{ url_for('static', filename='js/popper.js') }}" type=text/javascript defer></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.js') }}" type=text/javascript defer></script>
         <script type="module" src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     </head>
     <body>
         <h1>ProMan</h1>
-        <div id="boards">Boards are loading...</div>
-        <button id="new-board">New Board</button>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <button type="button" class="btn btn-light" id="new_board" >New Board</button>
+                    <div id="boards">Boards are loading...</div>
+                    <table class="table table-bordered">
+                        <tr class="header">
+                            <th colspan="4" id="board_header">
+                            Board
+                            <button type="button" class="btn btn-light" id="new_card" >New Card</button>
+                            <span>-</span>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th scope="col">New</th>
+                            <th scope="col">In progress</th>
+                            <th scope="col">Testing</th>
+                            <th scope="col">Done</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="card mb-3" style="max-width: 18rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title">Title</h5>
+                                    <p class="card-text">text</p>
+                                    </div>
+                                </div>
+                                <div class="card mb-3" style="max-width: 18rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title">Title</h5>
+                                    <p class="card-text">text</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
+
+
