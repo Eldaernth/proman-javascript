@@ -53,5 +53,10 @@ export let dom = {
         // shows the cards of a board
         // it adds necessary event listeners also
     },
+    addBoards:function () {
+        dataHandler.createNewBoard({title:'Board'},function(boards){
+            dom.showBoards(boards);
+        });
+    }
     // here comes more features
 };

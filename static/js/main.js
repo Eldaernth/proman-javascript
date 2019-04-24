@@ -1,4 +1,4 @@
-import {dom} from "./dom.js";
+import { dom } from "./dom.js";
 
 // This function is to initialize the application
 function init() {
@@ -19,14 +19,11 @@ $('.header').click(function(){
     $(this).nextUntil('tr.header').slideToggle(100, function(){
     });
 });
+window.onload = function () {
+    init();
+    dataHandler._api_post("/add-board",{title:"board"},function (response) {
+        console.log(response)
 
-init();
+    })
+};
 
-let container = document.querySelector("#container");
-let container2 = document.querySelector("#container2");
-let container3 = document.querySelector("#container3");
-let containers = [container, container2, container3];
-let drake = dragula({ containers: [container] });
-console.log(drake);
-
-dragula([container2]);
