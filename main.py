@@ -27,7 +27,10 @@ def get_boards():
 def add_board():
 
     board = request.get_json()
+    print(board)
+    
     return jsonify({"result": "OK"})
+
 
 @app.route("/get-cards/<int:board_id>")
 @json_response

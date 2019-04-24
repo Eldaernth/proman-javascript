@@ -26,7 +26,7 @@ export let dataHandler = {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: data
+            body: JSON.stringify(data)
         })
 
         .then(response => response.json())  // parse the response as JSON
