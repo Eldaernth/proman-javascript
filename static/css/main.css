@@ -1,3 +1,58 @@
-#boards {
-    background-color: green;
+/*#boards {*/
+    /*background-color: green;*/
+/*}*/
+
+.table {
+    text-align: center;
+    vertical-align: center;
+    background-color: whitesmoke;
+}
+
+.col-11 {
+    position: center;
+}
+
+td {
+    width: 18rem;
+}
+
+body {
+    background-color: #00B2FF;
+    font-family: "Andale Mono";
+}
+
+th {
+    background-color: #003371;
+    color: white;
+}
+
+#board_header {
+    background-color: #007EC6;
+    text-align: left;
+    color: white;
+    text-shadow: 2px 2px darkslategrey;
+    font-size: large;
+}
+
+card {
+    background-color: white;
+}
+
+.container {
+    width: available;
+}
+
+h1 {
+    text-align: center;
+    color: white;
+    text-shadow: 2px 2px darkslategrey;
+    font-size: 4em;
+}
+
+.btn {
+    border: 2px #003371 solid;
+}
+
+.card {
+    border: 2px #007EC6 solid;
 }
