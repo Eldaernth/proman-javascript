@@ -3,11 +3,18 @@ import {dataHandler} from "./data_handler.js";
 
 // This function is to initialize the application
 function init() {
+    init_data();
     // init data
     dom.init();
     // loads the boards to the screen
     dom.loadBoards();
 
+}
+
+function init_data() {
+    dataHandler._api_post("/add-board", {title: "board"}, function (response) {
+        console.log(response)
+    });
 }
 
 //
@@ -27,9 +34,6 @@ $('.header').click(function () {
 
 window.onload = function () {
     init();
-    dataHandler._api_post("/add-board", {title: "board"}, function (response) {
-        console.log(response)
-    });
 
     let boardElement =
     `<table class="table table-bordered">
@@ -76,4 +80,3 @@ window.onload = function () {
     };
 
 };
-
