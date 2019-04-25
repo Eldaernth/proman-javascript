@@ -47,7 +47,7 @@ window.onload = function () {
             <th scope="col">Done</th>
         </tr>
         <tr>
-            <td class="new-cards"></td>
+            <td id="new-cards"></td>
             <td></td>
             <td></td>
             <td></td>
