@@ -35,48 +35,13 @@ $('.header').click(function () {
 window.onload = function () {
     init();
 
-    let boardElement =
-    `<table class="table table-bordered">
-        <tr class="header">
-            <th colspan="4" id="board_header">
-            Board
-            <button type="button" class="btn btn-light" id="new_card" >New Card</button>
-            <span>-</span>
-            </th>
-        </tr>
-        <tr>
-            <th scope="col">New</th>
-            <th scope="col">In progress</th>
-            <th scope="col">Testing</th>
-            <th scope="col">Done</th>
-        </tr>
-        <tr>
-            <td class="new-cards"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-                </tr>
-    </table>`
-
-    let cardElement = `<div class="card mb-3" style="max-width: 18rem;">
-                                    <div class="card-body">
-                                    <h5 class="card-title">Title</h5>
-                                    <p class="card-text">text</p>
-                                    </div>
-                                </div>`
-
+    /// TODO: class instead of ID
     let new_card = document.getElementById("new_card");
-    console.log(document.getElementById(    "new-cards"));
+    // console.log(document.getElementById(    "new-cards"));
     new_card.onclick = function () {
         let cards = document.getElementById("new-cards");
         console.log(cards);
         cards.insertAdjacentHTML("afterbegin", cardElement);
-    };
-    let button = document.getElementById("new_board");
-    console.log(button);
-    button.onclick = function () {
-        let boards = document.getElementById("boards");
-        boards.insertAdjacentHTML("afterbegin", boardElement);
     };
 
 };
