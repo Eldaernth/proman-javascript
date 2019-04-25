@@ -47,20 +47,33 @@ window.onload = function () {
             <th scope="col">Done</th>
         </tr>
         <tr>
-            <td></td>
+            <td class="new-cards"></td>
             <td></td>
             <td></td>
             <td></td>
                 </tr>
     </table>`
 
+    let cardElement = `<div class="card mb-3" style="max-width: 18rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title">Title</h5>
+                                    <p class="card-text">text</p>
+                                    </div>
+                                </div>`
+
+    let new_card = document.getElementById("new_card");
+    console.log(document.getElementById(    "new-cards"));
+    new_card.onclick = function () {
+        let cards = document.getElementById("new-cards");
+        console.log(cards);
+        cards.insertAdjacentHTML("afterbegin", cardElement);
+    };
     let button = document.getElementById("new_board");
     console.log(button);
     button.onclick = function () {
         let boards = document.getElementById("boards");
         boards.insertAdjacentHTML("afterbegin", boardElement);
-    }
+    };
 
 };
-
 
