@@ -23,27 +23,6 @@ export let dom = {
                       <p class="card-text">text</p>
                     </div>
                   </div>`,
-    boardElement: `<table class="table table-bordered">
-        <tr class="header">
-            <th colspan="4" id="board_header">
-            Board
-            <button type="button" class="btn btn-light" id="new_card" >New Card</button>
-            <span>-</span>
-            </th>
-        </tr>
-        <tr>
-            <th scope="col">New</th>
-            <th scope="col">In progress</th>
-            <th scope="col">Testing</th>
-            <th scope="col">Done</th>
-        </tr>
-        <tr>
-            <td class="new-cards"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </table>`,
     init: function () {
         // This function should run once, when the page is loaded.
 
@@ -52,8 +31,7 @@ export let dom = {
         // console.log(button);
         const dom = this;
         button.onclick = function () {
-            let boards = document.getElementById("boards");
-            boards.insertAdjacentHTML("afterbegin", dom.boardElement);
+            dataHandler.createNewBoard("A new board", dom.showBoards);
         };
     },
     loadBoards: function () {
@@ -66,21 +44,40 @@ export let dom = {
         // shows boards appending them to #boards div
         // it adds necessary event listeners also
 
-        let boardList = '';
+        let boards = document.getElementById("boards");
+        let dom = this;
 
         for(let board of boards){
-            boardList += `
-                <li>${board.title}</li>
-            `;
+            boards.insertAdjacentHTML("afterbegin", dom.renderBoard(board));
+            let new_card = document.getElementById(`new_card-{board.id}`);
+            new_card.onclick = function () {
+                let cards = document.getElementById(`new-cards-{board.id}`);
+                cards.insertAdjacentHTML("afterbegin", cardElement);
+            };
         }
-
-        const outerHtml = `
-            <ul class="board-container">
-                ${boardList}
-            </ul>
-        `;
-
-        this._appendToElement(document.querySelector('#boards'), outerHtml);
+    },
+    renderBoard: function (board) {
+        return `<table class="table table-bordered">
+        <tr class="header">
+            <th colspan="4" id="board_header">
+            {board.name}
+            <button type="button" class="btn btn-light" id="new_card-{board.id}" >New Card</button>
+            <span>-</span>
+            </th>
+        </tr>
+        <tr>
+            <th scope="col">New</th>
+            <th scope="col">In progress</th>
+            <th scope="col">Testing</th>
+            <th scope="col">Done</th>
+        </tr>
+        <tr>
+            <td class="new-cards-{board.id}"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>`;
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
