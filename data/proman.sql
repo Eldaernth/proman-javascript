@@ -48,7 +48,13 @@ ALTER TABLE ONLY cards
     ADD CONSTRAINT fk_statuses_id FOREIGN KEY (status_id) REFERENCES statuses(id);
 
 
-SELECT pg_catalog.setval('pk_boards_id', 1, true);
-SELECT pg_catalog.setval('pk_cards_id', 1, true);
-SELECT pg_catalog.setval('pk_statuses_id', 1, true);
+INSERT INTO statuses (id, title) VALUES (1, 'New');
+INSERT INTO statuses (id, title) VALUES (2, 'In progress');
+INSERT INTO statuses (id, title) VALUES (3, 'Testing');
+INSERT INTO statuses (id, title) VALUES (4, 'Done');
+
+
+SELECT pg_catalog.setval('boards_id_seq', 1, true);
+SELECT pg_catalog.setval('cards_id_seq', 1, true);
+SELECT pg_catalog.setval('statuses_id_seq', 1, true);
 
