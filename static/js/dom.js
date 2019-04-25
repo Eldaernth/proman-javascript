@@ -48,10 +48,10 @@ export let dom = {
         let dom = this;
 
         for(let board of boards){
-            boards.insertAdjacentHTML("afterbegin", dom.renderBoard(board));
-            let new_card = document.getElementById(`new_card-{board.id}`);
+            boards_root.insertAdjacentHTML("afterbegin", dom.renderBoard(board));
+            let new_card = document.getElementById(`new_card-${board.id}`);
             new_card.onclick = function () {
-                let cards = document.getElementById(`new-cards-{board.id}`);
+                let cards = document.getElementById(`new-cards-${board.id}`);
                 cards.insertAdjacentHTML("afterbegin", cardElement);
             };
         }
@@ -60,8 +60,8 @@ export let dom = {
         return `<table class="table table-bordered">
         <tr class="header">
             <th colspan="4" id="board_header">
-            {board.name}
-            <button type="button" class="btn btn-light" id="new_card-{board.id}" >New Card</button>
+            ${board.name}
+            <button type="button" class="btn btn-light" id="new_card-${board.id}" >New Card</button>
             <span>-</span>
             </th>
         </tr>
@@ -72,7 +72,7 @@ export let dom = {
             <th scope="col">Done</th>
         </tr>
         <tr>
-            <td class="new-cards-{board.id}"></td>
+            <td class="new-cards-${board.id}"></td>
             <td></td>
             <td></td>
             <td></td>
