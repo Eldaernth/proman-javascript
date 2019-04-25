@@ -36,16 +36,13 @@ export let dom = {
     },
     loadBoards: function () {
         // retrieves boards and makes showBoards called
-        dataHandler.getBoards(function(boards){
-            dom.showBoards(boards);
-        });
+        dataHandler.getBoards(dom.showBoards);
     },
     showBoards: function (boards) {
         // shows boards appending them to #boards div
         // it adds necessary event listeners also
 
-        let boards = document.getElementById("boards");
-        let dom = this;
+        let boards_root = document.getElementById("boards");
 
         for(let board of boards){
             boards_root.insertAdjacentHTML("afterbegin", dom.renderBoard(board));
