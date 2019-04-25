@@ -62,9 +62,12 @@ export let dataHandler = {
     },
     createNewBoard: function (boardTitle, callback) {
         this._api_post('/add-boards', boardTitle ,(response) => {
-            console.log(this._data);
-            this._data = response;
-            callback(response);
+            // console.log(this._data);
+            if (this._data.hasOwnProperty('boards')){
+                this._data['boards'] = [];
+            }
+            this._data['boards'].push(response);
+            callback([response]);
         });
     },
     createNewCard: function (cardTitle, boardId, statusId, callback) {
