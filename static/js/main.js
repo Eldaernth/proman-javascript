@@ -74,7 +74,7 @@ window.onload = function () {
         let boards = document.getElementById("boards");
         boards.insertAdjacentHTML("afterbegin", boardElement);
     };
-    dragula([document.getElementById('new')], [document.getElementById('progress')],
+    dragula([document.getElementById('new-cards')], [document.getElementById('progress')],
         [document.getElementById('testing')], [document.getElementById('done')])
 };
 
