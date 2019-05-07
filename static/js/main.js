@@ -44,6 +44,10 @@ function init() {
                 let boardElement = renderBoard(board["title"]);
                 let boards = document.getElementById("accordion");
                 boards.insertAdjacentHTML("afterbegin", boardElement);
+                let card =document.querySelector(".card")
+                card.dataset.id = board["id"];
+                card.dataset.title = board["title"]
+
             }
         });
 }
@@ -58,9 +62,9 @@ window.onload = function () {
                                     </div>
                                 </div>`;
 
-    let new_card = document.getElementById("new-card");
-    console.log(document.getElementById("new-cards"));
-    new_card.onclick = function () {
+    let new_card = document.querySelectorAll(".new-card                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ");
+    console.log(new_card);
+    new_card.onclick = function (event) {
         let cards = document.getElementById("new-cards");
         console.log(cards);
         cards.insertAdjacentHTML("afterbegin", cardElement);
@@ -74,7 +78,7 @@ window.onload = function () {
     //
 
     dragula([document.getElementById('new-cards'), document.getElementById('progress'),
-        document.getElementById('testing'), document.getElementById('done')])
+        document.getElementById('testing'), document.getElementById('done')]);
 
 
     let newBoard = document.getElementById("create-board");
@@ -108,12 +112,12 @@ window.onload = function () {
 };
 
 function renderBoard(title) {
-    return `<div class="card">
+    return `<div class="card" data-id="" data-title="">
                 <div class="card-header" id="headingOne">
                     <tr class="header">
                         <th colspan="4" id="board_header">
                             ${title}
-                            <button type="button" class="btn btn-light new_card" id="new_card">New Card</button>
+                            <button type="button" class="btn btn-light new-card" id="new-card">New Card</button>
                         </th>
                     </tr>
                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo"
