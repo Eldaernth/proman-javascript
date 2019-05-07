@@ -25,12 +25,31 @@ import {dataHandler} from "./data_handler.js";
 // });
 
 
-window.onload = function () {
-    // init();
-    dataHandler._api_post("/add-board", {title: "board"}, function (response) {
-        console.log(response)
-    });
+function init() {
+    fetch("/get-boards", {
+        method: "GET",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        redirect: "follow",
+        referrer: "no-referrer",
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            for (let board of data) {
+                let boardElement = renderBoard(board["title"]);
+                let boards = document.getElementById("accordion");
+                boards.insertAdjacentHTML("afterbegin", boardElement);
+            }
+        });
+}
 
+window.onload = function () {
+    init();
 
     let cardElement = `<div class="card mb-3" style="max-width: 18rem;">
                                     <div class="card-body">
@@ -61,12 +80,39 @@ window.onload = function () {
     let newBoard = document.getElementById("create-board");
     newBoard.addEventListener("click", function () {
         let title = document.getElementById("board-title");
-        let boardElement =
-            `<div class="card">
+
+        let boardElement = renderBoard(title.value);
+
+        let boards = document.getElementById("accordion");
+        boards.insertAdjacentHTML("afterbegin", boardElement);
+
+        console.log("OK");
+        fetch("/add-board", {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrer: "no-referrer",
+            body: JSON.stringify({
+                "title": title.value
+            }),
+        })
+            .then(response => response.json())
+            .then(data => console.log(data));
+
+    })
+};
+
+function renderBoard(title) {
+    return `<div class="card">
                 <div class="card-header" id="headingOne">
                     <tr class="header">
                         <th colspan="4" id="board_header">
-                            ${title.value}
+                            ${title}
                             <button type="button" class="btn btn-light new_card" id="new_card">New Card</button>
                         </th>
                     </tr>
@@ -111,27 +157,4 @@ window.onload = function () {
                     </div>
                 </div>
             </div>`;
-        let boards = document.getElementById("accordion");
-        boards.insertAdjacentHTML("afterbegin", boardElement);
-
-        console.log("OK");
-        fetch("/add-board", {
-            method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            redirect: "follow",
-            referrer: "no-referrer",
-            body: JSON.stringify({
-                "title": title.value
-            }),
-        })
-            .then(response => response.json())
-            .then(data => console.log(data));
-
-    })
-};
-
+}

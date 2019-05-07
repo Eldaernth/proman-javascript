@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, request
-from util import json_response,jsonify
+from util import json_response, jsonify
 
 import data_handler
 import queries
@@ -16,17 +16,17 @@ def index():
 
 
 @app.route("/get-boards")
-@json_response
 def get_boards():
     """
     All the boards
     """
-    return data_handler.get_boards()
+    
+    boards = queries.get_boards()
+    return jsonify(boards)
 
 
 @app.route("/add-board", methods=["POST"])
 def add_board():
-
     board = request.get_json()
     queries.insert_board(board["title"])
     print(board)
@@ -46,7 +46,7 @@ def get_cards_for_board(board_id: int):
 
 def main():
     app.run(debug=True)
-
+    
     # Serving the favicon
     with app.app_context():
         app.add_url_rule('/favicon.ico', redirect_to=url_for('static', filename='favicon/favicon.ico'))
