@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, request
 from util import json_response,jsonify
 
 import data_handler
+import queries
 
 app = Flask(__name__)
 
@@ -27,6 +28,7 @@ def get_boards():
 def add_board():
 
     board = request.get_json()
+    queries.insert_board(board["title"])
     print(board)
     
     return jsonify({"result": "OK"})

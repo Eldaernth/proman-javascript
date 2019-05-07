@@ -36,3 +36,14 @@ def get_all_statuses(cursor):
         )
     )
     return cursor.fetchall()
+
+
+@connection.connection_handler
+def insert_board(cursor, boardtitle):
+    cursor.execute(
+        """
+        INSERT INTO boards (title)
+        values (%(boardtitle)s)
+        """,
+        {"boardtitle": boardtitle})
+

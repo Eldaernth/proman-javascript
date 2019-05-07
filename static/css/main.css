@@ -6,6 +6,7 @@
     text-align: center;
     vertical-align: center;
     background-color: whitesmoke;
+    margin: 0;
 }
 
 .col-11 {
@@ -104,4 +105,9 @@ h1 {
 #flex {
   display: flex;
   justify-content: space-between;
+}
+
+.card-body {
+    margin: 0;
+    padding: 0;
 }
