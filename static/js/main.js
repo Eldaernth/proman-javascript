@@ -10,23 +10,9 @@ import {dataHandler} from "./data_handler.js";
 
 // }
 
-//
-// $('.header').click(function(){
-//
-// $(this).nextUntil('tr.header').slideToggle(1000);
-// });
 
-// $('.header').click(function () {
-//     $(this).find('span').text(function (_, value) {
-//         return value === '-' ? '+' : '-'
-//     });
-//     $(this).nextUntil('tr.header').slideToggle(100, function () {
-//     });
-// });
-
-
-function init() {
-    fetch("/get-boards", {
+function api_get(url, callback) {
+    fetch(url, {
         method: "GET",
         mode: "cors",
         cache: "no-cache",
@@ -38,94 +24,118 @@ function init() {
         referrer: "no-referrer",
     })
         .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            for (let board of data) {
-                let boardElement = renderBoard(board["title"]);
-                let boards = document.getElementById("accordion");
-                boards.insertAdjacentHTML("afterbegin", boardElement);
-                let card =document.querySelector(".card")
-                card.dataset.id = board["id"];
-                card.dataset.title = board["title"]
-
-            }
-        });
+        .then(data => callback(data))
 }
 
-window.onload = function () {
-    init();
 
-    let cardElement = `<div class="card mb-3" style="max-width: 18rem;">
-                                    <div class="card-body">
-                                    <h5 class="card-title">Title</h5>
-                                    <p class="card-text">text</p>
-                                    </div>
-                                </div>`;
+function createCardEvents() {
 
-    let new_card = document.querySelectorAll(".new-card                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ");
-    console.log(new_card);
-    new_card.onclick = function (event) {
-        let cards = document.getElementById("new-cards");
-        console.log(cards);
+    function createCard(event) {
+        let cards = document.querySelector(`[data-first-card-id=${CSS.escape(event.target.dataset.buttonId)}]`);
+        let cardElement = renderCardElement();
         cards.insertAdjacentHTML("afterbegin", cardElement);
-    };
+    }
+
+    let newCards = document.querySelectorAll(".new-card");
+    for (let newCard of newCards) {
+        newCard.onclick = createCard;
+    }
+}
 
 
-    // button.onclick = function () {
-    //     let boards = document.getElementById("accordion");
-    //     boards.insertAdjacentHTML("afterbegin", boardElement);
-    // };
-    //
+function initCallback(data) {
 
-    dragula([document.getElementById('new-cards'), document.getElementById('progress'),
-        document.getElementById('testing'), document.getElementById('done')]);
+    let newBoardButton = document.getElementById("new-board-button");
+    newBoardButton.addEventListener("click", () => {
+        let modalInput = document.getElementById("board-title");
+        console.log(modalInput);
+        modalInput.autofocus = true;
+    });
+
+    for (let board of data) {
+
+        let boards = document.getElementById("accordion");
+        let boardElement = renderBoardElement(board["title"]);
+        boards.insertAdjacentHTML("afterbegin", boardElement);
+
+        createDataAttributes(board);
+        createCardEvents();
+    }
+}
+
+function init() {
+    api_get("/get-boards", initCallback);
+}
+
+function createDataAttributes(board) {
+    let card = document.querySelector(".new-card");
+    card.dataset.buttonId = board["id"];
+    card.dataset.buttonTitle = board["title"];
+    let newCardPosition = document.querySelector("#new-cards");
+    newCardPosition.dataset.firstCardId = board["id"];
+    newCardPosition.dataset.firstCardTitle = board["title"];
+    console.log(newCardPosition);
+}
 
 
+function api_post(url, data) {
+    fetch(url, {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        redirect: "follow",
+        referrer: "no-referrer",
+        body: JSON.stringify(data),
+    })
+}
+
+
+window.onload = function () {
+
+    dragAndDrop();
+    init();
+    createBoard();
+
+};
+
+function dragAndDrop() {
+    let newCards = document.getElementById('new-cards');
+    let progress = document.getElementById('progress');
+    let testing = document.getElementById('testing');
+    let done = document.getElementById('done');
+
+    dragula([newCards, progress, testing, done]);
+}
+
+function createBoard() {
     let newBoard = document.getElementById("create-board");
     newBoard.addEventListener("click", function () {
-        let title = document.getElementById("board-title");
 
-        let boardElement = renderBoard(title.value);
-
+        let modalHeader = document.getElementById("board-title");
+        let boardElement = renderBoardElement(modalHeader.value);
         let boards = document.getElementById("accordion");
         boards.insertAdjacentHTML("afterbegin", boardElement);
 
-        console.log("OK");
-        fetch("/add-board", {
-            method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            redirect: "follow",
-            referrer: "no-referrer",
-            body: JSON.stringify({
-                "title": title.value
-            }),
-        })
-            .then(response => response.json())
-            .then(data => console.log(data));
-
+        api_post("/add-board", {"title": modalHeader.value});
     })
-};
+}
 
-function renderBoard(title) {
+
+function renderBoardElement(title) {
     return `<div class="card" data-id="" data-title="">
                 <div class="card-header" id="headingOne">
                     <tr class="header">
-                        <th colspan="4" id="board_header">
-                            ${title}
-                            <button type="button" class="btn btn-light new-card" id="new-card">New Card</button>
+                        <th colspan="4" id="board_header">${title}
+                        <button type="button" class="btn btn-light new-card" id="new-card">New Card</button>
                         </th>
                     </tr>
                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo"
-                            aria-expanded="false" aria-controls="collapseTwo">
-                        +/-
-                    </button>
+                            aria-expanded="false" aria-controls="collapseTwo"> +/- </button>
                 </div>
-
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                     <div class="card-body">
                         <table class="table table-bordered">
@@ -136,30 +146,22 @@ function renderBoard(title) {
                                 <th scope="col">Done</th>
                             </tr>
                             <tr id="columns">
-                                <td id="new-cards">
-                                    <!--<div class="card mb-3" id="card" style="max-width: 18rem;">-->
-                                        <!--<div class="card-body">-->
-                                            <!--<h5 class="card-title">Title 1</h5>-->
-                                            <!--<p class="card-text">text</p>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                    <!--<div class="card mb-3" id="card" style="max-width: 18rem;">-->
-                                        <!--<div class="card-body">-->
-                                            <!--<h5 class="card-title">Title 2</h5>-->
-                                            <!--<p class="card-text">text</p>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                </td>
-                                <td id="progress">
-
-                                </td>
+                                <td id="new-cards"></td>
+                                <td id="progress"></td>
                                 <td id="testing"></td>
                                 <td id="done"></td>
                             </tr>
                         </table>
-
                     </div>
                 </div>
             </div>`;
 }
 
+function renderCardElement() {
+    return `<div class="card mb-3" style="max-width: 18rem;">
+                <div class="card-body">
+                <h5 class="card-title">Title</h5>
+                <p class="card-text">text</p>
+                </div>
+            </div>`
+}
