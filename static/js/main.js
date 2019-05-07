@@ -158,3 +158,4 @@ function renderBoard(title) {
                 </div>
             </div>`;
 }
+
