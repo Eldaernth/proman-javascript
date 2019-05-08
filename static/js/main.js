@@ -103,9 +103,21 @@ function createDataAttributes(board) {
     let card = document.querySelector(".new-card");
     card.dataset.buttonId = board["id"];
     card.dataset.buttonTitle = board["title"];
+
     let newCardPosition = document.querySelector("#new-cards");
     newCardPosition.dataset.firstCardId = board["id"];
     newCardPosition.dataset.firstCardTitle = board["title"];
+
+    let collapseButton = document.querySelector("#collapse-button");
+    collapseButton.dataset.target = "#b" + board["id"];
+    collapseButton.setAttribute("aria-controls", "b" + board["id"]);
+
+    let collapseDiv = document.querySelector("#collapseTwo");
+    collapseDiv.id = "b" + board["id"];
+    collapseDiv.setAttribute("aria-labelledby", "b" + board["id"]);
+    console.log(collapseButton);
+    console.log(collapseDiv);
+
 }
 
 
@@ -126,9 +138,6 @@ function api_post(url, data, callback) {
         .then(data => callback(data));
 }
 
-// function newBoardCallback (data) {
-//     api_get("/add-board", getDataCallback)
-// }
 
 function getDataCallback(data) {
     createDataAttributes(data)
@@ -148,16 +157,6 @@ function dragAndDrop() {
     let inprogress = document.getElementById('in-progress');
     let testing = document.getElementById('testing');
     let done = document.getElementById('done');
-    // let dragDropColumns = [newCards, progress, testing, done];
-    // let dragElements = [];
-    //
-    // for (let columns of dragDropColumns) {
-    //     for (let column of columns) {
-    //         dragElements.push(column)
-    //     }
-    // }
-    // console.log(dragElements);
-    // dragula(dragElements);
     dragula([newCards, inprogress, testing, done]);
 }
 
@@ -183,7 +182,7 @@ function renderBoardElement(title) {
                         <button type="button" class="btn btn-light new-card" id="new-card" data-toggle="modal" data-target="#cardModalCenter">New Card</button>
                         </th>
                     </tr>
-                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo"
+                    <button class="btn btn-link" id="collapse-button" data-toggle="collapse" data-target="#collapseTwo"
                             aria-expanded="false" aria-controls="collapseTwo"> +/- </button>
                 </div>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
