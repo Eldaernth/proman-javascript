@@ -38,18 +38,19 @@ function addCardCreatePopUpEvent(boardId) {
 
 function createCardCallback(data) {
 
+    console.log(data);
     let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(data["board_id"])}]`);
     let cardElement = renderCardElement(data["title"]);
     newStatusCard.insertAdjacentHTML("afterbegin", cardElement);
 
 }
 
-function initCard (data) {
-
-    let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(data["id"])}]`);
-    let cardElement = renderCardElement(data["title"]);
-    newStatusCard.insertAdjacentHTML("afterbegin", cardElement);
-}
+// function initCard (data) {
+//
+//     let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(data["id"])}]`);
+//     let cardElement = renderCardElement(data["title"]);
+//     newStatusCard.insertAdjacentHTML("afterbegin", cardElement);
+// }
 
 function createCard() {
     let createCard = document.getElementById("create-card");
@@ -70,6 +71,11 @@ function createCard() {
     }
 }
 
+function addCardToBoard(data) {
+    console.log("WORK", data);
+    createCardCallback(data);
+}
+
 
 function initCallback(data) {
 
@@ -79,6 +85,7 @@ function initCallback(data) {
     //     modalInput.autofocus = true;
     // });
 
+
     for (let board of data) {
 
         console.log(board);
@@ -86,11 +93,13 @@ function initCallback(data) {
         let boardElement = renderBoardElement(board["title"]);
         boards.insertAdjacentHTML("afterbegin", boardElement);
 
+        api_get(`/get-cards/${board["id"]}`, addCardToBoard);
 
         createDataAttributes(board);
         console.log(board["id"]);
         addCardCreatePopUpEvent(board["id"]);
-        initCard(board);
+
+
 
     }
 }

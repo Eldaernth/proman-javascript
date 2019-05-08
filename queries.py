@@ -72,3 +72,18 @@ def insert_card(cursor, card):
               "status_id": card["status_id"],
               "orders": card["orders"]}
     )
+
+
+@connection.connection_handler
+def get_cards_for_board(cursor, board_id):
+    cursor.execute(
+        """
+        SELECT id, board_id, title, status_id, orders
+        FROM cards
+        WHERE board_id= %(board_id)s
+        """, {
+            "board_id": board_id
+        }
+    )
+    
+    return cursor.fetchall()
