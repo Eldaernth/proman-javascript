@@ -73,7 +73,12 @@ function createCard() {
 
 function addCardToBoard(data) {
     console.log("WORK", data);
-    createCardCallback(data);
+
+    for(let card of data) {
+        createCardCallback(card);
+
+    }
+
 }
 
 
