@@ -28,39 +28,73 @@ function api_get(url, callback) {
 }
 
 
-function createCardEvents() {
-
-    function createCard(event) {
-        let cards = document.querySelector(`[data-first-card-id=${CSS.escape(event.target.dataset.buttonId)}]`);
-        let cardElement = renderCardElement();
-        cards.insertAdjacentHTML("afterbegin", cardElement);
+function addCardCreatePopUpEvent(boardId) {
+    let newCard = document.querySelector(`[data-button-id=${CSS.escape(boardId)}]`);
+    newCard.onclick = function () {
+        let createCard = document.getElementById("create-card");
+        createCard.dataset.boardId=boardId;
     }
+}
 
-    let newCards = document.querySelectorAll(".new-card");
-    for (let newCard of newCards) {
-        newCard.onclick = createCard;
+function createCardCallback(data) {
+
+    let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(data["board_id"])}]`);
+    let cardElement = renderCardElement(data["title"]);
+    newStatusCard.insertAdjacentHTML("afterbegin", cardElement);
+
+}
+
+function initCard (data) {
+
+    let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(data["id"])}]`);
+    let cardElement = renderCardElement(data["title"]);
+    newStatusCard.insertAdjacentHTML("afterbegin", cardElement);
+}
+
+function createCard() {
+    let createCard = document.getElementById("create-card");
+    createCard.onclick = function (event) {
+
+        let boardId = event.target.dataset.boardId;
+        console.log(event.target);
+
+        let cardInput = document.getElementById("card-title");
+        let title = cardInput.value;
+        let card = {
+            "board_id": boardId,
+            "title": title,
+            "status_id": 0,
+            "orders": 0
+        };
+        api_post("/add-card", card, createCardCallback)
     }
 }
 
 
 function initCallback(data) {
 
-    let newBoardButton = document.getElementById("new-board-button");
-    newBoardButton.addEventListener("click", () => {
-        let modalInput = document.getElementById("board-title");
-        modalInput.autofocus = true;
-    });
+    // let newBoardButton = document.getElementById("new-board-button");
+    // newBoardButton.addEventListener("click", () => {
+    //     let modalInput = document.getElementById("board-title");
+    //     modalInput.autofocus = true;
+    // });
 
     for (let board of data) {
 
+        console.log(board);
         let boards = document.getElementById("accordion");
         let boardElement = renderBoardElement(board["title"]);
         boards.insertAdjacentHTML("afterbegin", boardElement);
 
+
         createDataAttributes(board);
-        createCardEvents();
+        console.log(board["id"]);
+        addCardCreatePopUpEvent(board["id"]);
+        initCard(board);
+
     }
 }
+
 
 function init() {
     api_get("/get-boards", initCallback);
@@ -97,7 +131,7 @@ function api_post(url, data, callback) {
 //     api_get("/add-board", getDataCallback)
 // }
 
-function getDataCallback (data) {
+function getDataCallback(data) {
     createDataAttributes(data)
 }
 
@@ -106,6 +140,7 @@ window.onload = function () {
     dragAndDrop();
     init();
     createBoard();
+    createCard();
 
 };
 
@@ -145,7 +180,7 @@ function renderBoardElement(title) {
                 <div class="card-header" id="headingOne">
                     <tr class="header">
                         <th colspan="4" id="board_header">${title}
-                        <button type="button" class="btn btn-light new-card" id="new-card">New Card</button>
+                        <button type="button" class="btn btn-light new-card" id="new-card" data-toggle="modal" data-target="#cardModalCenter">New Card</button>
                         </th>
                     </tr>
                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo"
@@ -172,10 +207,10 @@ function renderBoardElement(title) {
             </div>`;
 }
 
-function renderCardElement() {
+function renderCardElement(title) {
     return `<div class="card mb-3" style="max-width: 18rem;">
                 <div class="card-body">
-                <h5 class="card-title">Title</h5>
+                <h5 class="card-title">${title}</h5>
                 <p class="card-text">text</p>
                 </div>
             </div>`

@@ -24,6 +24,12 @@ def get_boards():
     boards = queries.get_boards()
     return jsonify(boards)
 
+@app.route("/get-cards")
+def get_cards():
+    
+    cards = queries.get_cards()
+    print(cards)
+    return jsonify(cards)
 
 @app.route("/add-board", methods=["POST", "GET"])
 def add_board():
@@ -32,6 +38,14 @@ def add_board():
     id = dict(queries.get_new_board_data())
     print(id)
     return jsonify(id)
+
+
+@app.route("/add-card", methods=["POST"])
+def add_card():
+    card = request.get_json()
+    print(card)
+    queries.insert_card(card)
+    return jsonify(card)
 
 
 @app.route("/get-cards/<int:board_id>")
