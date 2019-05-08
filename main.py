@@ -25,13 +25,13 @@ def get_boards():
     return jsonify(boards)
 
 
-@app.route("/add-board", methods=["POST"])
+@app.route("/add-board", methods=["POST", "GET"])
 def add_board():
     board = request.get_json()
     queries.insert_board(board["title"])
-    print(board)
-    
-    return jsonify({"result": "OK"})
+    id = dict(queries.get_new_board_data())
+    print(id)
+    return jsonify(id)
 
 
 @app.route("/get-cards/<int:board_id>")

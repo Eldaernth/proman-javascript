@@ -78,7 +78,7 @@ function createDataAttributes(board) {
 }
 
 
-function api_post(url, data) {
+function api_post(url, data, callback) {
     fetch(url, {
         method: "POST",
         mode: "cors",
@@ -91,8 +91,17 @@ function api_post(url, data) {
         referrer: "no-referrer",
         body: JSON.stringify(data),
     })
+        .then(response => response.json())
+        .then(data => callback(data));
 }
 
+// function newBoardCallback (data) {
+//     api_get("/add-board", getDataCallback)
+// }
+
+function getDataCallback (data) {
+    createDataAttributes(data)
+}
 
 window.onload = function () {
 
@@ -114,7 +123,7 @@ function dragAndDrop() {
     //         dragula([column]);
     //     }
     // }
-    // dragula([newCards, progress, testing, done]);
+    dragula([newCards, progress, testing, done]);
 }
 
 function createBoard() {
@@ -125,9 +134,8 @@ function createBoard() {
         let boardElement = renderBoardElement(modalHeader.value);
         let boards = document.getElementById("accordion");
         boards.insertAdjacentHTML("afterbegin", boardElement);
-
-        api_post("/add-board", {"title": modalHeader.value});
-    })
+        api_post("/add-board", {"title": modalHeader.value}, getDataCallback);
+    });
 }
 
 

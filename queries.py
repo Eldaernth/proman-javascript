@@ -47,3 +47,14 @@ def insert_board(cursor, boardtitle):
         """,
         {"boardtitle": boardtitle})
 
+@connection.connection_handler
+def get_new_board_data(cursor):
+    cursor.execute(
+        """
+        SELECT id, title FROM boards
+        ORDER BY id DESC
+        LIMIT 1
+        """
+    )
+    return cursor.fetchone()
+
