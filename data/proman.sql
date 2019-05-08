@@ -49,7 +49,7 @@ ALTER TABLE ONLY cards
 
 
 INSERT INTO statuses (id, title) VALUES (1, 'New');
-INSERT INTO statuses (id, title) VALUES (2, 'In progress');
+INSERT INTO statuses (id, title) VALUES (2, 'In inprogress');
 INSERT INTO statuses (id, title) VALUES (3, 'Testing');
 INSERT INTO statuses (id, title) VALUES (4, 'Done');
 

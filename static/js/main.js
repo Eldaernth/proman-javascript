@@ -48,7 +48,6 @@ function initCallback(data) {
     let newBoardButton = document.getElementById("new-board-button");
     newBoardButton.addEventListener("click", () => {
         let modalInput = document.getElementById("board-title");
-        console.log(modalInput);
         modalInput.autofocus = true;
     });
 
@@ -74,7 +73,6 @@ function createDataAttributes(board) {
     let newCardPosition = document.querySelector("#new-cards");
     newCardPosition.dataset.firstCardId = board["id"];
     newCardPosition.dataset.firstCardTitle = board["title"];
-    console.log(newCardPosition);
 }
 
 
@@ -113,17 +111,20 @@ window.onload = function () {
 
 function dragAndDrop() {
     let newCards = document.getElementsByClassName('new-cards');
-    let progress = document.getElementsByClassName('progress');
+    let progress = document.getElementsByClassName('in-progress');
     let testing = document.getElementsByClassName('testing');
     let done = document.getElementsByClassName('done');
-    // let dragDropColumns = [newCards, progress, testing, done];
-    //
-    // for (let columns in dragDropColumns) {
-    //     for (let column in columns) {
-    //         dragula([column]);
-    //     }
-    // }
-    dragula([newCards, progress, testing, done]);
+    let dragDropColumns = [newCards, progress, testing, done];
+    let dragElements = [];
+
+    for (let columns of dragDropColumns) {
+        for (let column of columns) {
+            dragElements.push(column)
+        }
+    }
+    console.log(dragElements);
+    dragula(dragElements);
+    // dragula([newCards, inprogress, testing, done]);
 }
 
 function createBoard() {
@@ -160,10 +161,10 @@ function renderBoardElement(title) {
                                 <th scope="col">Done</th>
                             </tr>
                             <tr id="columns">
-                                <td class="new-cards"></td>
-                                <td class="progress"></td>
-                                <td class="testing"></td>
-                                <td class="done"></td>
+                                <td class="new-cards" id="new-cards"></td>
+                                <td class="in-progress" id="in-progress"></td>
+                                <td class="testing" id="testing"></td>
+                                <td class="done" id="done"></td>
                             </tr>
                         </table>
                     </div>

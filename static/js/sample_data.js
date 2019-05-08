@@ -11,7 +11,7 @@ let sampleData = {
         },
         {
             "id": 2,
-            "name": "In progress"
+            "name": "In inprogress"
         },
         {
             "id": 3,

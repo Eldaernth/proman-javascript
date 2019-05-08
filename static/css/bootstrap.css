@@ -5260,7 +5260,7 @@ a.badge-dark:focus, a.badge-dark.focus {
   }
 }
 
-.progress {
+.inprogress {
   display: -ms-flexbox;
   display: flex;
   height: 1rem;
