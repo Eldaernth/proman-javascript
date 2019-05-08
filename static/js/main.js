@@ -103,12 +103,18 @@ window.onload = function () {
 };
 
 function dragAndDrop() {
-    let newCards = document.getElementById('new-cards');
-    let progress = document.getElementById('progress');
-    let testing = document.getElementById('testing');
-    let done = document.getElementById('done');
-
-    dragula([newCards, progress, testing, done]);
+    let newCards = document.getElementsByClassName('new-cards');
+    let progress = document.getElementsByClassName('progress');
+    let testing = document.getElementsByClassName('testing');
+    let done = document.getElementsByClassName('done');
+    // let dragDropColumns = [newCards, progress, testing, done];
+    //
+    // for (let columns in dragDropColumns) {
+    //     for (let column in columns) {
+    //         dragula([column]);
+    //     }
+    // }
+    // dragula([newCards, progress, testing, done]);
 }
 
 function createBoard() {
@@ -146,10 +152,10 @@ function renderBoardElement(title) {
                                 <th scope="col">Done</th>
                             </tr>
                             <tr id="columns">
-                                <td id="new-cards"></td>
-                                <td id="progress"></td>
-                                <td id="testing"></td>
-                                <td id="done"></td>
+                                <td class="new-cards"></td>
+                                <td class="progress"></td>
+                                <td class="testing"></td>
+                                <td class="done"></td>
                             </tr>
                         </table>
                     </div>
