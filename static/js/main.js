@@ -28,12 +28,11 @@ function api_get(url, callback) {
 }
 
 
-
 function addCardCreatePopUpEvent(boardId) {
     let newCard = document.querySelector(`[data-button-id=${CSS.escape(boardId)}]`);
     newCard.onclick = function () {
         let createCard = document.getElementById("create-card");
-        createCard.dataset.boardId=boardId;
+        createCard.dataset.boardId = boardId;
     }
 }
 
@@ -42,7 +41,6 @@ function createCardCallback(data) {
     let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(data["board_id"])}]`);
     let cardElement = renderCardElement(data["title"]);
     newStatusCard.insertAdjacentHTML("afterbegin", cardElement);
-
 }
 
 
@@ -61,16 +59,16 @@ function createCard() {
             "status_id": 0,
             "orders": 0
         };
-        api_post("/add-card", card, createCardCallback)
+        api_post("/add-card", card, createCardCallback);
+    }
+}
 
 function addCardToBoard(data) {
     console.log("WORK", data);
 
-    for(let card of data) {
+    for (let card of data) {
         createCardCallback(card);
-
     }
-
 }
 
 
