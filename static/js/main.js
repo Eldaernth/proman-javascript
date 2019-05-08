@@ -59,6 +59,8 @@ function initCallback(data) {
 
         createDataAttributes(board);
         createCardEvents();
+        dragAndDrop()
+
     }
 }
 
@@ -110,21 +112,21 @@ window.onload = function () {
 };
 
 function dragAndDrop() {
-    let newCards = document.getElementsByClassName('new-cards');
-    let progress = document.getElementsByClassName('in-progress');
-    let testing = document.getElementsByClassName('testing');
-    let done = document.getElementsByClassName('done');
-    let dragDropColumns = [newCards, progress, testing, done];
-    let dragElements = [];
-
-    for (let columns of dragDropColumns) {
-        for (let column of columns) {
-            dragElements.push(column)
-        }
-    }
-    console.log(dragElements);
-    dragula(dragElements);
-    // dragula([newCards, inprogress, testing, done]);
+    let newCards = document.getElementById('new-cards');
+    let inprogress = document.getElementById('in-progress');
+    let testing = document.getElementById('testing');
+    let done = document.getElementById('done');
+    // let dragDropColumns = [newCards, progress, testing, done];
+    // let dragElements = [];
+    //
+    // for (let columns of dragDropColumns) {
+    //     for (let column of columns) {
+    //         dragElements.push(column)
+    //     }
+    // }
+    // console.log(dragElements);
+    // dragula(dragElements);
+    dragula([newCards, inprogress, testing, done]);
 }
 
 function createBoard() {
@@ -136,6 +138,7 @@ function createBoard() {
         let boards = document.getElementById("accordion");
         boards.insertAdjacentHTML("afterbegin", boardElement);
         api_post("/add-board", {"title": modalHeader.value}, getDataCallback);
+        dragAndDrop()
     });
 }
 
