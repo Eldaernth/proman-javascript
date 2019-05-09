@@ -25,7 +25,7 @@ export let dom = {
                 dom.board.createDataAttributes(board);
                 dom.board.collapseHandler(board);
                 dom.card.createCardPopUp(board["id"]);
-                dom.card.dragAndDrop()
+                dom.dragAndDrop.createDndElements()
             }
         }
 
@@ -40,7 +40,7 @@ export let dom = {
                 let boards = document.getElementById("accordion");
                 boards.insertAdjacentHTML("afterbegin", boardElement);
                 dataHandler.api_post("/add-board", {"title": modalHeader.value}, dom.board.createBoardCallback);
-                dom.card.dragAndDrop()
+                dom.dragAndDrop.createDndElements()
             });
         },
         createBoardCallback: function (data) {
@@ -68,13 +68,7 @@ export let dom = {
         }
     },
     card: {
-        dragAndDrop: function () {
-            let newCards = document.getElementById('new-cards');
-            let inProgress = document.getElementById('in-progress');
-            let testing = document.getElementById('testing');
-            let done = document.getElementById('done');
-            dragula([newCards, inProgress, testing, done]);
-        },
+
         createCardPopUp: function (boardId) {
             let newCard = document.querySelector(`[data-button-id=${CSS.escape(boardId)}]`);
             newCard.onclick = function () {
@@ -83,9 +77,9 @@ export let dom = {
             }
         },
 
-        createCardCallback: function (data) {
-            let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(data["board_id"])}]`);
-            let cardElement = dom.render.cardElement(data["title"]);
+        createCardCallback: function (card) {
+            let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(card["board_id"])}]`);
+            let cardElement = dom.render.cardElement(card["title"]);
             newStatusCard.insertAdjacentHTML("afterbegin", cardElement);
         },
 
@@ -106,13 +100,27 @@ export let dom = {
             let createCard = document.getElementById("create-card");
             createCard.addEventListener('click', (e) => this.onCardClicked(e));
         },
-        addCardToBoard: function (data) {
-            for (let card of data) {
+        addCardToBoard: function (cards) {
+            for (let card of cards) {
                 dom.card.createCardCallback(card);
                 // THIS ???????????
             }
         }
 
+    },
+    dragAndDrop: {
+        createDndElements: function () {
+            let newCards = document.getElementById('new-cards');
+            let inProgress = document.getElementById('in-progress');
+            let testing = document.getElementById('testing');
+            let done = document.getElementById('done');
+            let drake = dragula([newCards, inProgress, testing, done]);
+            console.log(drake);
+            drake.on("drop", dom.dragAndDrop.onDrop);
+        },
+        onDrop: function (el, target, source, sibling) {
+            console.log("EL",el, "target",target, "SRC",source, "SIB",sibling)
+        }
     },
     render: {
         boardElement: function renderBoardElement(title) {
@@ -140,10 +148,10 @@ export let dom = {
                                         <th scope="col">Done</th>
                                     </tr>
                                     <tr id="columns">
-                                        <td class="new-cards" id="new-cards"></td>
-                                        <td class="in-progress" id="in-progress"></td>
-                                        <td class="testing" id="testing"></td>
-                                        <td class="done" id="done"></td>
+                                        <td class="new-cards" id="new-cards" data-status-id="0"></td>
+                                        <td class="in-progress" id="in-progress" data-status-id="1"></td>
+                                        <td class="testing" id="testing" data-status-id="2"></td>
+                                        <td class="done" id="done" data-status-id="3"></td>
                                     </tr>
                                 </table>
                             </div>
@@ -151,7 +159,7 @@ export let dom = {
                     </div>`;
         },
         cardElement: function (title) {
-            return `<div class="card mb-3" style="max-width: 18rem;">
+            return `<div class="card mb-3 dnd-card" style="max-width: 18rem;">
                 <div class="card-body">
                 <h5 class="card-title">${title}</h5>
                 </div>
