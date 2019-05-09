@@ -37,7 +37,6 @@ function addCardCreatePopUpEvent(boardId) {
 }
 
 function createCardCallback(data) {
-    console.log(data);
     let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(data["board_id"])}]`);
     let cardElement = renderCardElement(data["title"]);
     newStatusCard.insertAdjacentHTML("afterbegin", cardElement);
@@ -49,8 +48,6 @@ function createCard() {
     createCard.onclick = function (event) {
 
         let boardId = event.target.dataset.boardId;
-        console.log(event.target);
-
         let cardInput = document.getElementById("card-title");
         let title = cardInput.value;
         let card = {
@@ -64,8 +61,6 @@ function createCard() {
 }
 
 function addCardToBoard(data) {
-    console.log("WORK", data);
-
     for (let card of data) {
         createCardCallback(card);
     }
@@ -115,8 +110,7 @@ function createDataAttributes(board) {
     let collapseDiv = document.querySelector("#collapseTwo");
     collapseDiv.id = "b" + board["id"];
     collapseDiv.setAttribute("aria-labelledby", "b" + board["id"]);
-    console.log(collapseButton);
-    console.log(collapseDiv);
+
 
 }
 
@@ -140,7 +134,8 @@ function api_post(url, data, callback) {
 
 
 function getDataCallback(data) {
-    createDataAttributes(data)
+    createDataAttributes(data);
+    addCardCreatePopUpEvent(data["id"]);
 }
 
 window.onload = function () {
