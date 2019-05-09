@@ -64,6 +64,35 @@ h1 {
   background-color: goldenrod;
 }
 
+#flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-body {
+    margin: 0;
+    padding: 0;
+}
+
+#accordion button {
+    float: right;
+    margin: 0 5px;
+}
+
+#boards {
+    padding: 0;
+}
+
+input[type=text] {
+    border: 2px #007EC6 solid;
+}
+
+textarea {
+    height: 100%;
+    width: 100%;
+    border: 2px #007EC6 solid;
+}
+
 /*Dragula CSS*/
 
 .gu-mirror {
@@ -101,13 +130,5 @@ h1 {
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
   filter: alpha(opacity=20);
 }
+/*Dragula END*/
 
-#flex {
-  display: flex;
-  justify-content: space-between;
-}
-
-.card-body {
-    margin: 0;
-    padding: 0;
-}

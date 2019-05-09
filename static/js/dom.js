@@ -1,92 +1,162 @@
-// It uses data_handler.js to visualize elements
-import { dataHandler } from "./data_handler.js";
+import {dataHandler} from "./data_handler.js";
 
 export let dom = {
-    _appendToElement: function (elementToExtend, textToAppend, prepend = false) {
-        // function to append new DOM elements (represented by a string) to an existing DOM element
-        let fakeDiv = document.createElement('div');
-        fakeDiv.innerHTML = textToAppend.trim();
 
-        for (let childNode of fakeDiv.childNodes) {
-            if (prepend) {
-                elementToExtend.prependChild(childNode);
-            } else {
-                elementToExtend.appendChild(childNode);
+    init: {
+        init: function () {
+            dataHandler.api_get("/get-boards", dom.init.initCallback);
+        },
+        initCallback: function (data) {
+
+            let newBoardButton = document.getElementById("new-board-button");
+            newBoardButton.addEventListener("click", () => {
+                let modalInput = document.getElementById("board-title");
+                modalInput.autofocus = true;
+            });
+
+            for (let board of data) {
+
+                let boards = document.getElementById("accordion");
+                let boardElement = dom.render.boardElement(board["title"]);
+                boards.insertAdjacentHTML("afterbegin", boardElement);
+
+                dataHandler.api_get(`/get-cards/${board["id"]}`, dom.card.addCardToBoard);
+
+                dom.board.createDataAttributes(board);
+                dom.board.collapseHandler(board);
+                dom.card.createCardPopUp(board["id"]);
+                dom.card.dragAndDrop()
             }
         }
 
-        return elementToExtend.lastChild;
     },
-    cardElement: `<div class="card mb-3" style="max-width: 18rem;">
-                    <div class="card-body">
-                      <h5 class="card-title">Title</h5>
-                      <p class="card-text">text</p>
-                    </div>
-                  </div>`,
-    init: function () {
-        // This function should run once, when the page is loaded.
+    board: {
+        createBoard: function () {
+            let newBoard = document.getElementById("create-board");
+            newBoard.addEventListener("click", function () {
 
-        // Register event handler for adding new boards
-        let button = document.getElementById("new_board");
-        // console.log(button);
-        const dom = this;
-        button.onclick = function () {
-            dataHandler.createNewBoard("A new board", dom.showBoards);
-        };
-    },
-    loadBoards: function () {
-        // retrieves boards and makes showBoards called
-        dataHandler.getBoards(dom.showBoards);
-    },
-    showBoards: function (boards) {
-        // shows boards appending them to #boards div
-        // it adds necessary event listeners also
+                let modalHeader = document.getElementById("board-title");
+                let boardElement = dom.render.boardElement(modalHeader.value);
+                let boards = document.getElementById("accordion");
+                boards.insertAdjacentHTML("afterbegin", boardElement);
+                dataHandler.api_post("/add-board", {"title": modalHeader.value}, dom.board.createBoardCallback);
+                dom.card.dragAndDrop()
+            });
+        },
+        createBoardCallback: function (data) {
+            dom.board.createDataAttributes(data);
+            dom.board.collapseHandler(data);
+            dom.card.createCardPopUp(data["id"]);
+        },
+        createDataAttributes: function createDataAttributes(board) {
+            let card = document.querySelector(".new-card");
+            card.dataset.buttonId = board["id"];
+            card.dataset.buttonTitle = board["title"];
 
-        let boards_root = document.getElementById("boards");
+            let newCardPosition = document.querySelector("#new-cards");
+            newCardPosition.dataset.firstCardId = board["id"];
+            newCardPosition.dataset.firstCardTitle = board["title"];
+        },
+        collapseHandler: function collapseHandler(board) {
+            let collapseButton = document.querySelector("#collapse-button");
+            collapseButton.dataset.target = "#b" + board["id"];
+            collapseButton.setAttribute("aria-controls", "b" + board["id"]);
 
-        for(let board of boards){
-            boards_root.insertAdjacentHTML("afterbegin", dom.renderBoard(board));
-            let new_card = document.getElementById(`new_card-${board.id}`);
-            new_card.onclick = function () {
-                let cards = document.getElementById(`new-cards-${board.id}`);
-                cards.insertAdjacentHTML("afterbegin", cardElement);
-            };
+            let collapseDiv = document.querySelector("#collapseTwo");
+            collapseDiv.id = "b" + board["id"];
+            collapseDiv.setAttribute("aria-labelledby", "b" + board["id"]);
         }
     },
-    renderBoard: function (board) {
-        return `<table class="table table-bordered">
-        <tr class="header">
-            <th colspan="4" id="board_header">
-            ${board.name}
-            <button type="button" class="btn btn-light" id="new_card-${board.id}" >New Card</button>
-            <span>-</span>
-            </th>
-        </tr>
-        <tr>
-            <th scope="col">New</th>
-            <th scope="col">In progress</th>
-            <th scope="col">Testing</th>
-            <th scope="col">Done</th>
-        </tr>
-        <tr>
-            <td class="new-cards-${board.id}"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </table>`;
+    card: {
+        dragAndDrop: function () {
+            let newCards = document.getElementById('new-cards');
+            let inProgress = document.getElementById('in-progress');
+            let testing = document.getElementById('testing');
+            let done = document.getElementById('done');
+            dragula([newCards, inProgress, testing, done]);
+        },
+        createCardPopUp: function (boardId) {
+            let newCard = document.querySelector(`[data-button-id=${CSS.escape(boardId)}]`);
+            newCard.onclick = function () {
+                let createCard = document.getElementById("create-card");
+                createCard.dataset.boardId = boardId;
+            }
+        },
+
+        createCardCallback: function (data) {
+            let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(data["board_id"])}]`);
+            let cardElement = dom.render.cardElement(data["title"]);
+            newStatusCard.insertAdjacentHTML("afterbegin", cardElement);
+        },
+
+        onCardClicked: function (event) {
+            let boardId = event.target.dataset.boardId;
+            let cardInput = document.getElementById("card-title");
+            let title = cardInput.value;
+            let card = {
+                "board_id": boardId,
+                "title": title,
+                "status_id": 0,
+                "orders": 0
+            };
+            dataHandler.api_post("/add-card", card, this.createCardCallback);
+        },
+
+        createCard: function createCard() {
+            let createCard = document.getElementById("create-card");
+            createCard.addEventListener('click', (e) => this.onCardClicked(e));
+        },
+        addCardToBoard: function (data) {
+            for (let card of data) {
+                dom.card.createCardCallback(card);
+                // THIS ???????????
+            }
+        }
+
     },
-    loadCards: function (boardId) {
-        // retrieves cards and makes showCards called
-    },
-    showCards: function (cards) {
-        // shows the cards of a board
-        // it adds necessary event listeners also
-    },
-    addBoards:function () {
-        dataHandler.createNewBoard({title:'Board'},function(boards){
-            dom.showBoards(boards);
-        });
+    render: {
+        boardElement: function renderBoardElement(title) {
+            return `<div class="card" data-id="" data-title="">
+                        <div class="card-header" id="headingOne">
+                            <tr class="header">
+                            <button class="btn btn-link" id="collapse-button" data-toggle="collapse" data-target="#collapseTwo"
+                                    aria-expanded="false" aria-controls="collapseTwo"> +/- </button>
+                                <th colspan="4" id="board_header">${title}
+                                <button type="button"
+                                 class="btn btn-light new-card"
+                                 id="new-card"
+                                 data-toggle="modal"
+                                 data-target="#cardModalCenter">New Card</button>
+                                </th>
+                            </tr>
+                        </div>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th scope="col">New</th>
+                                        <th scope="col">In progress</th>
+                                        <th scope="col">Testing</th>
+                                        <th scope="col">Done</th>
+                                    </tr>
+                                    <tr id="columns">
+                                        <td class="new-cards" id="new-cards"></td>
+                                        <td class="in-progress" id="in-progress"></td>
+                                        <td class="testing" id="testing"></td>
+                                        <td class="done" id="done"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>`;
+        },
+        cardElement: function (title) {
+            return `<div class="card mb-3" style="max-width: 18rem;">
+                <div class="card-body">
+                <h5 class="card-title">${title}</h5>
+                </div>
+            </div>`
+        }
     }
-    // here comes more features
+
 };
