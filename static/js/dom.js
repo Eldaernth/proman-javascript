@@ -9,12 +9,14 @@ export let dom = {
         initCallback: function (data) {
 
             let newBoardButton = document.getElementById("new-board-button");
-            newBoardButton.addEventListener("click", () => {
-                let modalInput = document.getElementById("board-title");
-                modalInput.autofocus = true;
+            newBoardButton.addEventListener("click", function () {
+                document.getElementById("board-title").value = "";
             });
 
+
             for (let board of data) {
+
+
 
                 let boards = document.getElementById("accordion");
                 let boardElement = dom.render.boardElement(board["title"]);
@@ -22,6 +24,13 @@ export let dom = {
 
                 dataHandler.api_get(`/get-cards/${board["id"]}`, dom.card.addCardToBoard);
 
+                let newCardButton = document.getElementById("new-card");
+                newCardButton.addEventListener("click", function () {
+                    document.getElementById("card-title").value = "";
+                    // document.getElementById("card-title").autofocus = true;
+                    // ?????????
+
+                });
                 dom.board.createDataAttributes(board);
                 dom.board.collapseHandler(board);
                 dom.card.createCardPopUp(board["id"]);
@@ -53,9 +62,18 @@ export let dom = {
             card.dataset.buttonId = board["id"];
             card.dataset.buttonTitle = board["title"];
 
-            let newCardPosition = document.querySelector("#new-cards");
-            newCardPosition.dataset.firstCardId = board["id"];
-            newCardPosition.dataset.firstCardTitle = board["title"];
+            dom.board.setStatusesDataAttributes(board, "#new-cards");
+            dom.board.setStatusesDataAttributes(board, "#in-progress");
+            dom.board.setStatusesDataAttributes(board, "#testing");
+            dom.board.setStatusesDataAttributes(board, "#done");
+
+
+        },
+        setStatusesDataAttributes: function (board, columnIds) {
+            let newCardPosition = document.querySelector(columnIds);
+            newCardPosition.dataset.boardId = board["id"];
+            newCardPosition.dataset.boardTitle = board["title"];
+
         },
         collapseHandler: function collapseHandler(board) {
             let collapseButton = document.querySelector("#collapse-button");
@@ -78,9 +96,12 @@ export let dom = {
         },
 
         createCardCallback: function (card) {
-            let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(card["board_id"])}]`);
-            let cardElement = dom.render.cardElement(card["title"]);
-            newStatusCard.insertAdjacentHTML("afterbegin", cardElement);
+
+            let column = document.querySelector(`[data-status-id=${CSS.escape(card["status_id"])}][data-board-id=${CSS.escape(card["board_id"])}]`);
+            let cardElement = dom.render.cardElement(card["title"], card["id"], card["status_id"]);
+            column.insertAdjacentHTML("afterbegin", cardElement);
+
+
         },
 
         onCardClicked: function (event) {
@@ -96,7 +117,7 @@ export let dom = {
             dataHandler.api_post("/add-card", card, this.createCardCallback);
         },
 
-        createCard: function createCard() {
+        createCard: function () {
             let createCard = document.getElementById("create-card");
             createCard.addEventListener('click', (e) => this.onCardClicked(e));
         },
@@ -115,11 +136,14 @@ export let dom = {
             let testing = document.getElementById('testing');
             let done = document.getElementById('done');
             let drake = dragula([newCards, inProgress, testing, done]);
-            console.log(drake);
             drake.on("drop", dom.dragAndDrop.onDrop);
         },
         onDrop: function (el, target, source, sibling) {
-            console.log("EL",el, "target",target, "SRC",source, "SIB",sibling)
+            el.dataset.statusId = target.dataset.statusId;
+            dataHandler.api_post("/update-card-status", {
+                "id": el.dataset.id,
+                "status_id": el.dataset.statusId
+            }, () => console.log("SIKERULT"));
         }
     },
     render: {
@@ -158,8 +182,8 @@ export let dom = {
                         </div>
                     </div>`;
         },
-        cardElement: function (title) {
-            return `<div class="card mb-3 dnd-card" style="max-width: 18rem;">
+        cardElement: function (title, id, status_id) {
+            return `<div class="card mb-3 dnd-card" data-id="${id}" data-status-id="${status_id}" style="max-width: 18rem;">
                 <div class="card-body">
                 <h5 class="card-title">${title}</h5>
                 </div>
