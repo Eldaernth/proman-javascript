@@ -1,68 +1,28 @@
-// import {dom} from "./dom.js";
+import {dom} from "./dom.js";
 import {dataHandler} from "./data_handler.js";
 
 // This function is to initialize the application
 // function init() {
 //     // init data
-//     dom.init();
+//     domOriginal.init();
 //     // loads the boards to the screen
-//     dom.loadBoards();
+//     domOriginal.loadBoards();
 
 // }
 
 
-function api_get(url, callback) {
-    fetch(url, {
-        method: "GET",
-        mode: "cors",
-        cache: "no-cache",
-        credentials: "same-origin",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        redirect: "follow",
-        referrer: "no-referrer",
-    })
-        .then(response => response.json())
-        .then(data => callback(data))
-}
 
 
-function addCardCreatePopUpEvent(boardId) {
-    let newCard = document.querySelector(`[data-button-id=${CSS.escape(boardId)}]`);
-    newCard.onclick = function () {
-        let createCard = document.getElementById("create-card");
-        createCard.dataset.boardId = boardId;
-    }
-}
-
-function createCardCallback(data) {
-    let newStatusCard = document.querySelector(`[data-first-card-id=${CSS.escape(data["board_id"])}]`);
-    let cardElement = renderCardElement(data["title"]);
-    newStatusCard.insertAdjacentHTML("afterbegin", cardElement);
-}
 
 
-function createCard() {
-    let createCard = document.getElementById("create-card");
-    createCard.onclick = function (event) {
 
-        let boardId = event.target.dataset.boardId;
-        let cardInput = document.getElementById("card-title");
-        let title = cardInput.value;
-        let card = {
-            "board_id": boardId,
-            "title": title,
-            "status_id": 0,
-            "orders": 0
-        };
-        api_post("/add-card", card, createCardCallback);
-    }
-}
+
+
+
 
 function addCardToBoard(data) {
     for (let card of data) {
-        createCardCallback(card);
+        dom.card.createCardCallback(card);
     }
 }
 
@@ -81,17 +41,17 @@ function initCallback(data) {
         let boardElement = renderBoardElement(board["title"]);
         boards.insertAdjacentHTML("afterbegin", boardElement);
 
-        api_get(`/get-cards/${board["id"]}`, addCardToBoard);
+        dataHandler.api_get(`/get-cards/${board["id"]}`, addCardToBoard);
 
         createDataAttributes(board);
-        addCardCreatePopUpEvent(board["id"]);
+        dom.card.createCardPopUp(board["id"]);
         dragAndDrop()
     }
 }
 
 
 function init() {
-    api_get("/get-boards", initCallback);
+    dataHandler.api_get("/get-boards", initCallback);
 }
 
 function createDataAttributes(board) {
@@ -115,27 +75,11 @@ function createDataAttributes(board) {
 }
 
 
-function api_post(url, data, callback) {
-    fetch(url, {
-        method: "POST",
-        mode: "cors",
-        cache: "no-cache",
-        credentials: "same-origin",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        redirect: "follow",
-        referrer: "no-referrer",
-        body: JSON.stringify(data),
-    })
-        .then(response => response.json())
-        .then(data => callback(data));
-}
 
 
 function getDataCallback(data) {
     createDataAttributes(data);
-    addCardCreatePopUpEvent(data["id"]);
+    dom.card.createCardPopUp(data["id"]);
 }
 
 window.onload = function () {
@@ -143,7 +87,7 @@ window.onload = function () {
     dragAndDrop();
     init();
     createBoard();
-    createCard();
+    dom.card.createCard();
 
 };
 
@@ -163,7 +107,7 @@ function createBoard() {
         let boardElement = renderBoardElement(modalHeader.value);
         let boards = document.getElementById("accordion");
         boards.insertAdjacentHTML("afterbegin", boardElement);
-        api_post("/add-board", {"title": modalHeader.value}, getDataCallback);
+        dataHandler.api_post("/add-board", {"title": modalHeader.value}, getDataCallback);
         dragAndDrop()
     });
 }
@@ -201,11 +145,3 @@ function renderBoardElement(title) {
             </div>`;
 }
 
-function renderCardElement(title) {
-    return `<div class="card mb-3" style="max-width: 18rem;">
-                <div class="card-body">
-                <h5 class="card-title">${title}</h5>
-                <p class="card-text">text</p>
-                </div>
-            </div>`
-}
