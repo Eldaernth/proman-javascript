@@ -49,7 +49,7 @@ def insert_board(cursor, boardtitle):
 
 
 @connection.connection_handler
-def get_new_board_data(cursor):
+def get_last_board_id(cursor):
     cursor.execute(
         """
         SELECT id, title FROM boards
@@ -57,6 +57,20 @@ def get_new_board_data(cursor):
         LIMIT 1
         """
     )
+    return cursor.fetchone()
+
+@connection.connection_handler
+def get_last_card(cursor):
+    
+    cursor.execute(
+        """
+        SELECT id,board_id,title,status_id
+        FROM cards
+        ORDER BY id DESC
+        LIMIT 1
+        """
+    )
+    
     return cursor.fetchone()
 
 
@@ -81,9 +95,23 @@ def get_cards_for_board(cursor, board_id):
         SELECT id, board_id, title, status_id, orders
         FROM cards
         WHERE board_id= %(board_id)s
-        """, {
-            "board_id": board_id
-        }
+        
+        """, {"board_id": board_id}
     )
     
     return cursor.fetchall()
+
+
+@connection.connection_handler
+def update_card(cursor, cardId, status_id):
+    
+    print(cardId, status_id)
+    cursor.execute(
+        """
+        UPDATE cards
+        SET status_id = %(status_id)s
+        WHERE id=%(id)s
+        
+        """, {"id": cardId,
+              "status_id": status_id}
+    )
