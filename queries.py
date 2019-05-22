@@ -115,3 +115,16 @@ def update_card(cursor, card_id, status_id, orders):
               "status_id": status_id,
               "orders": orders}
     )
+
+
+@connection.connection_handler
+def update_card_orders(cursor, board_id, status_id):
+    cursor.execute(
+        """
+        UPDATE cards
+        SET orders = orders + 1
+        WHERE board_id = %(board_id)s
+          AND status_id = %(status_id)s
+        """, {"board_id": board_id,
+              "status_id": status_id}
+    )
