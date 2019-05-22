@@ -8,17 +8,12 @@ export let dom = {
         },
         initCallback: function (data) {
 
-            let newBoardButton = document.getElementById("new-board-button");
-            newBoardButton.addEventListener("click", function () {
-                document.getElementById("board-title").value = "";
-            });
-
             for (let board of data) {
-
 
                 let boards = document.getElementById("accordion");
                 let boardElement = dom.render.boardElement(board["title"]);
                 boards.insertAdjacentHTML("afterbegin", boardElement);
+
                 let newCardButton = document.getElementById("new-card");
                 newCardButton.addEventListener("click", function () {
                     document.getElementById("card-title").value = "";
@@ -29,7 +24,8 @@ export let dom = {
                 dom.board.createDataAttributes(board);
                 dom.board.collapseHandler(board);
                 dom.card.createCardPopUp(board["id"]);
-                dom.dragAndDrop.createDndElements()
+                dom.dragAndDrop.createDndElements();
+                dom.board.clearCreateBoardInput();
             }
         }
     },
@@ -51,7 +47,7 @@ export let dom = {
             dom.board.collapseHandler(data);
             dom.card.createCardPopUp(data["id"]);
         },
-        createDataAttributes: function createDataAttributes(board) {
+        createDataAttributes: function (board) {
             let card = document.querySelector(".new-card");
             card.dataset.boardId = board["id"];
             card.dataset.buttonTitle = board["title"];
@@ -68,7 +64,7 @@ export let dom = {
             newCardPosition.dataset.boardTitle = board["title"];
 
         },
-        collapseHandler: function collapseHandler(board) {
+        collapseHandler: function (board) {
             let collapseButton = document.querySelector("#collapse-button");
             collapseButton.dataset.target = "#b" + board["id"];
             collapseButton.setAttribute("aria-controls", "b" + board["id"]);
@@ -76,7 +72,15 @@ export let dom = {
             let collapseDiv = document.querySelector("#collapseCards");
             collapseDiv.id = "b" + board["id"];
             collapseDiv.setAttribute("aria-labelledby", "b" + board["id"]);
+        },
+        clearCreateBoardInput: function () {
+
+            let newBoardButton = document.getElementById("new-board-button");
+            newBoardButton.addEventListener("click", function () {
+                document.getElementById("board-title").value = "";
+            });
         }
+
     },
     card: {
 
@@ -153,16 +157,16 @@ export let dom = {
         }
     },
     render: {
-        boardElement: function renderBoardElement(title) {
+        boardElement: function (title) {
             return `<div class="card">
                         <div class="card-header" id="headingOne">
+                            <span id="title-board">${title}</span>
                             <button class="btn btn-link"
                                     id="collapse-button" 
                                     data-toggle="collapse" 
                                     data-target="#collapseCards"
                                     aria-expanded="false" 
                                     aria-controls="collapseCards"> +/- </button>
-                            <span>${title}</span>
                             <button type="button"
                                     class="btn btn-light new-card"
                                     id="new-card"

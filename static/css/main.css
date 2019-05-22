@@ -51,25 +51,22 @@ h1 {
     border: 2px #007EC6 solid;
 }
 
+.card-body {
+    margin: 0;
+    padding: 0;
+}
 
 #flex {
     display: flex;
     justify-content: space-between;
 }
 
-.card-body {
-    margin: 0;
-    padding: 0;
-}
 
 #accordion button {
     float: right;
     margin: 0 5px;
 }
 
-#boards {
-    padding: 0;
-}
 
 input[type=text] {
     border: 2px #007EC6 solid;
@@ -79,4 +76,13 @@ textarea {
     height: 100%;
     width: 100%;
     border: 2px #007EC6 solid;
+}
+
+
+#boards {
+    padding: 0;
+}
+
+#title-board {
+    line-height: 2.5em;
 }
