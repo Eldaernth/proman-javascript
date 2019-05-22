@@ -59,9 +59,9 @@ def get_last_board_id(cursor):
     )
     return cursor.fetchone()
 
+
 @connection.connection_handler
 def get_last_card(cursor):
-    
     cursor.execute(
         """
         SELECT id,board_id,title,status_id
@@ -95,6 +95,7 @@ def get_cards_for_board(cursor, board_id):
         SELECT id, board_id, title, status_id, orders
         FROM cards
         WHERE board_id= %(board_id)s
+        ORDER BY orders DESC
         
         """, {"board_id": board_id}
     )
@@ -103,14 +104,14 @@ def get_cards_for_board(cursor, board_id):
 
 
 @connection.connection_handler
-def update_card(cursor, cardId, status_id):
-    
+def update_card(cursor, card_id, status_id, orders):
     cursor.execute(
         """
         UPDATE cards
-        SET status_id = %(status_id)s
+        SET status_id = %(status_id)s, orders = %(orders)s
         WHERE id=%(id)s
         
-        """, {"id": cardId,
-              "status_id": status_id}
+        """, {"id": card_id,
+              "status_id": status_id,
+              "orders": orders}
     )

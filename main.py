@@ -60,8 +60,10 @@ def get_cards_for_board(board_id: int):
 
 @app.route("/update-card-status", methods=["POST"])
 def update_card_status():
-    card = request.get_json()
-    queries.update_card(card["id"], card["status_id"])
+    cards = request.get_json()
+    print(request.get_json())
+    for card in cards:
+        queries.update_card(card["id"], card["status_id"], card["orders"])
     return jsonify({"result": "OK"})
 
 

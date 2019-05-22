@@ -134,15 +134,19 @@ export let dom = {
         },
         onDrop: function (el, target, source, sibling) {
             el.dataset.statusId = target.dataset.statusId;
-            dataHandler.api_post("/update-card-status", {
-                card: {
-                    "id": el.dataset.id,
-                    "status_id": el.dataset.statusId
-                },
-                other_cards: {
-                    ""
-                }
-            });
+            let cards = el.parentElement.children;
+            let postCards = [];
+            for (let i = 0; i < cards.length; i++) {
+                let postCard = {};
+                cards[i].dataset.orders = i.toString();
+                postCard["id"] = cards[i].dataset.id;
+                postCard["board_id"] = el.parentElement.dataset.boardId;
+                postCard["status_id"] = cards[i].dataset.statusId;
+                postCard["orders"] = cards[i].dataset.orders;
+                postCards.push(postCard);
+            }
+
+            dataHandler.api_post("/update-card-status", postCards);
         }
     },
     render: {
