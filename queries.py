@@ -105,7 +105,6 @@ def get_cards_for_board(cursor, board_id):
 @connection.connection_handler
 def update_card(cursor, cardId, status_id):
     
-    print(cardId, status_id)
     cursor.execute(
         """
         UPDATE cards

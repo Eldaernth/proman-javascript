@@ -139,7 +139,7 @@ export let dom = {
             dataHandler.api_post("/update-card-status", {
                 "id": el.dataset.id,
                 "status_id": el.dataset.statusId
-            }, () => console.log("SIKERULT"));
+            });
         }
     },
     render: {

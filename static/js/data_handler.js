@@ -31,7 +31,11 @@ export let dataHandler = {
                 body: JSON.stringify(data),
             })
                 .then(response => response.json())
-                .then(data => callback(data));
+                .then(data => {
+                    if (typeof callback === "function") {
+                        callback(data)
+                    }
+                });
         }
 
 };
