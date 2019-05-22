@@ -13,21 +13,19 @@ export let dom = {
                 document.getElementById("board-title").value = "";
             });
 
-
             for (let board of data) {
 
 
                 let boards = document.getElementById("accordion");
                 let boardElement = dom.render.boardElement(board["title"]);
                 boards.insertAdjacentHTML("afterbegin", boardElement);
-
-                dataHandler.api_get(`/get-cards/${board["id"]}`, dom.card.addCardToBoard);
-
                 let newCardButton = document.getElementById("new-card");
                 newCardButton.addEventListener("click", function () {
                     document.getElementById("card-title").value = "";
-
                 });
+
+                dataHandler.api_get(`/get-cards/${board["id"]}`, dom.card.addCardToBoard);
+
                 dom.board.createDataAttributes(board);
                 dom.board.collapseHandler(board);
                 dom.card.createCardPopUp(board["id"]);
@@ -55,7 +53,7 @@ export let dom = {
         },
         createDataAttributes: function createDataAttributes(board) {
             let card = document.querySelector(".new-card");
-            card.dataset.buttonId = board["id"];
+            card.dataset.boardId = board["id"];
             card.dataset.buttonTitle = board["title"];
 
             dom.board.setStatusesDataAttributes(board, "#new-cards");
@@ -84,7 +82,7 @@ export let dom = {
     card: {
 
         createCardPopUp: function (boardId) {
-            let newCard = document.querySelector(`[data-button-id=${CSS.escape(boardId)}]`);
+            let newCard = document.querySelector(`[data-board-id=${CSS.escape(boardId)}]`);
             newCard.onclick = function () {
                 let createCard = document.getElementById("create-card");
                 createCard.dataset.boardId = boardId;
@@ -93,7 +91,7 @@ export let dom = {
 
         createCardCallback: function (card) {
 
-            let column = document.querySelector(`[data-status-id=${CSS.escape(card["status_id"])}][data-board-id=${CSS.escape(card["board_id"])}]`);
+            let column = document.querySelector(`[data-status-id="${card["status_id"]}"][data-board-id="${card["board_id"]}"]`);
             let cardElement = dom.render.cardElement(card["title"], card["id"], card["status_id"]);
             column.insertAdjacentHTML("afterbegin", cardElement);
 
@@ -120,7 +118,6 @@ export let dom = {
         addCardToBoard: function (cards) {
             for (let card of cards) {
                 dom.card.createCardCallback(card);
-                // THIS ???????????
             }
         }
 
