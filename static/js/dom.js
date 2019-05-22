@@ -17,7 +17,6 @@ export let dom = {
             for (let board of data) {
 
 
-
                 let boards = document.getElementById("accordion");
                 let boardElement = dom.render.boardElement(board["title"]);
                 boards.insertAdjacentHTML("afterbegin", boardElement);
@@ -27,8 +26,6 @@ export let dom = {
                 let newCardButton = document.getElementById("new-card");
                 newCardButton.addEventListener("click", function () {
                     document.getElementById("card-title").value = "";
-                    // document.getElementById("card-title").autofocus = true;
-                    // ?????????
 
                 });
                 dom.board.createDataAttributes(board);
@@ -37,7 +34,6 @@ export let dom = {
                 dom.dragAndDrop.createDndElements()
             }
         }
-
     },
     board: {
         createBoard: function () {

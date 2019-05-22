@@ -28,7 +28,6 @@ def get_boards():
 @app.route("/get-cards")
 def get_cards():
     cards = queries.get_cards()
-    print(cards)
     return jsonify(cards)
 
 
@@ -37,14 +36,12 @@ def add_board():
     board = request.get_json()
     queries.insert_board(board["title"])
     id = dict(queries.get_last_board_id())
-    print(id)
     return jsonify(id)
 
 
 @app.route("/add-card", methods=["POST"])
 def add_card():
     card = request.get_json()
-    print(card)
     queries.insert_card(card)
     last_card = queries.get_last_card()
     
@@ -64,7 +61,6 @@ def get_cards_for_board(board_id: int):
 @app.route("/update-card-status", methods=["POST"])
 def update_card_status():
     card = request.get_json()
-    print(card)
     queries.update_card(card["id"], card["status_id"])
     return jsonify({"result": "OK"})
 
