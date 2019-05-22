@@ -98,10 +98,11 @@ export let dom = {
 
         },
 
-        onCardClicked: function (event) {
+        onNewCardClicked: function (event) {
             let boardId = event.target.dataset.boardId;
             let cardInput = document.getElementById("card-title");
             let title = cardInput.value;
+
             let card = {
                 "board_id": boardId,
                 "title": title,
@@ -113,7 +114,7 @@ export let dom = {
 
         createCard: function () {
             let createCard = document.getElementById("create-card");
-            createCard.addEventListener('click', (e) => this.onCardClicked(e));
+            createCard.addEventListener('click', (e) => this.onNewCardClicked(e));
         },
         addCardToBoard: function (cards) {
             for (let card of cards) {
@@ -134,8 +135,13 @@ export let dom = {
         onDrop: function (el, target, source, sibling) {
             el.dataset.statusId = target.dataset.statusId;
             dataHandler.api_post("/update-card-status", {
-                "id": el.dataset.id,
-                "status_id": el.dataset.statusId
+                card: {
+                    "id": el.dataset.id,
+                    "status_id": el.dataset.statusId
+                },
+                other_cards: {
+                    ""
+                }
             });
         }
     },
