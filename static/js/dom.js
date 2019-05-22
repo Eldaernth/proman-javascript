@@ -34,11 +34,11 @@ export let dom = {
             let newBoard = document.getElementById("create-board");
             newBoard.addEventListener("click", function () {
 
-                let modalHeader = document.getElementById("board-title");
-                let boardElement = dom.render.boardElement(modalHeader.value);
+                let boardTitleInput = document.getElementById("board-title-input");
+                let boardElement = dom.render.boardElement(boardTitleInput.value);
                 let boards = document.getElementById("accordion");
                 boards.insertAdjacentHTML("afterbegin", boardElement);
-                dataHandler.api_post("/add-board", {"title": modalHeader.value}, dom.board.createBoardCallback);
+                dataHandler.api_post("/add-board", {"title": boardTitleInput.value}, dom.board.createBoardCallback);
                 dom.dragAndDrop.createDndElements()
             });
         },
@@ -52,11 +52,10 @@ export let dom = {
             card.dataset.boardId = board["id"];
             card.dataset.buttonTitle = board["title"];
 
-            dom.board.setStatusesDataAttributes(board, "#new-cards");
-            dom.board.setStatusesDataAttributes(board, "#in-progress");
-            dom.board.setStatusesDataAttributes(board, "#testing");
-            dom.board.setStatusesDataAttributes(board, "#done");
-
+            let statuses = ["new-cards", "in-progress", "testing", "done"];
+            for (let status of statuses) {
+                dom.board.setStatusesDataAttributes(board, `#${status}`);
+            }
         },
         setStatusesDataAttributes: function (board, columnIds) {
             let newCardPosition = document.querySelector(columnIds);
@@ -69,7 +68,7 @@ export let dom = {
             collapseButton.dataset.target = "#b" + board["id"];
             collapseButton.setAttribute("aria-controls", "b" + board["id"]);
 
-            let collapseDiv = document.querySelector("#collapseCards");
+            let collapseDiv = document.querySelector("#collapseBoard");
             collapseDiv.id = "b" + board["id"];
             collapseDiv.setAttribute("aria-labelledby", "b" + board["id"]);
         },
@@ -77,7 +76,7 @@ export let dom = {
 
             let newBoardButton = document.getElementById("new-board-button");
             newBoardButton.addEventListener("click", function () {
-                document.getElementById("board-title").value = "";
+                document.getElementById("board-title-input").value = "";
             });
         }
 
@@ -160,20 +159,20 @@ export let dom = {
         boardElement: function (title) {
             return `<div class="card">
                         <div class="card-header" id="headingOne">
-                            <span id="title-board">${title}</span>
+                            <span class="board-title">${title}</span>
                             <button class="btn btn-link"
                                     id="collapse-button" 
                                     data-toggle="collapse" 
-                                    data-target="#collapseCards"
+                                    data-target="#collapseBoard"
                                     aria-expanded="false" 
-                                    aria-controls="collapseCards"> +/- </button>
+                                    aria-controls="collapseBoard"> +/- </button>
                             <button type="button"
                                     class="btn btn-light new-card"
                                     id="new-card"
                                     data-toggle="modal"
                                     data-target="#cardModalCenter">New Card</button>
                         </div>
-                        <div id="collapseCards" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                        <div id="collapseBoard" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                             <div class="card-body">
                                 <table class="table table-bordered">
                                     <tr>
