@@ -61,7 +61,6 @@ export let dom = {
             dom.board.setStatusesDataAttributes(board, "#testing");
             dom.board.setStatusesDataAttributes(board, "#done");
 
-
         },
         setStatusesDataAttributes: function (board, columnIds) {
             let newCardPosition = document.querySelector(columnIds);
@@ -74,7 +73,7 @@ export let dom = {
             collapseButton.dataset.target = "#b" + board["id"];
             collapseButton.setAttribute("aria-controls", "b" + board["id"]);
 
-            let collapseDiv = document.querySelector("#collapseTwo");
+            let collapseDiv = document.querySelector("#collapseCards");
             collapseDiv.id = "b" + board["id"];
             collapseDiv.setAttribute("aria-labelledby", "b" + board["id"]);
         }
@@ -120,6 +119,22 @@ export let dom = {
             for (let card of cards) {
                 dom.card.createCardCallback(card);
             }
+        },
+        createOrderedCardsObject: function (el) {
+
+            let cardsObject = [];
+            let cards = el.parentElement.children;
+            for (let i = 0; i < cards.length; i++) {
+                let card = {};
+                cards[i].dataset.orders = i.toString();
+                card["id"] = cards[i].dataset.id;
+                card["board_id"] = el.parentElement.dataset.boardId;
+                card["status_id"] = cards[i].dataset.statusId;
+                card["orders"] = cards[i].dataset.orders;
+                cardsObject.push(card);
+            }
+
+            return cardsObject
         }
 
     },
@@ -134,38 +149,27 @@ export let dom = {
         },
         onDrop: function (el, target, source, sibling) {
             el.dataset.statusId = target.dataset.statusId;
-            let cards = el.parentElement.children;
-            let postCards = [];
-            for (let i = 0; i < cards.length; i++) {
-                let postCard = {};
-                cards[i].dataset.orders = i.toString();
-                postCard["id"] = cards[i].dataset.id;
-                postCard["board_id"] = el.parentElement.dataset.boardId;
-                postCard["status_id"] = cards[i].dataset.statusId;
-                postCard["orders"] = cards[i].dataset.orders;
-                postCards.push(postCard);
-            }
-
-            dataHandler.api_post("/update-card-status", postCards);
+            dataHandler.api_post("/update-card-status", dom.card.createOrderedCardsObject(el));
         }
     },
     render: {
         boardElement: function renderBoardElement(title) {
-            return `<div class="card" data-id="" data-title="">
+            return `<div class="card">
                         <div class="card-header" id="headingOne">
-                            <tr class="header">
-                            <button class="btn btn-link" id="collapse-button" data-toggle="collapse" data-target="#collapseTwo"
-                                    aria-expanded="false" aria-controls="collapseTwo"> +/- </button>
-                                <th colspan="4" id="board_header">${title}
-                                <button type="button"
-                                 class="btn btn-light new-card"
-                                 id="new-card"
-                                 data-toggle="modal"
-                                 data-target="#cardModalCenter">New Card</button>
-                                </th>
-                            </tr>
+                            <button class="btn btn-link"
+                                    id="collapse-button" 
+                                    data-toggle="collapse" 
+                                    data-target="#collapseCards"
+                                    aria-expanded="false" 
+                                    aria-controls="collapseCards"> +/- </button>
+                            <span>${title}</span>
+                            <button type="button"
+                                    class="btn btn-light new-card"
+                                    id="new-card"
+                                    data-toggle="modal"
+                                    data-target="#cardModalCenter">New Card</button>
                         </div>
-                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                        <div id="collapseCards" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                             <div class="card-body">
                                 <table class="table table-bordered">
                                     <tr>
@@ -186,11 +190,13 @@ export let dom = {
                     </div>`;
         },
         cardElement: function (title, id, status_id) {
-            return `<div class="card mb-3 dnd-card" data-id="${id}" data-status-id="${status_id}" style="max-width: 18rem;">
-                <div class="card-body">
-                <h5 class="card-title">${title}</h5>
-                </div>
-            </div>`
+            return `<div class="card mb-3 dnd-card" 
+                         data-id="${id}" 
+                         data-status-id="${status_id}">
+                        <div class="card-body">
+                        <h5 class="card-title">${title}</h5>
+                        </div>
+                    </div>`
         }
     }
 
