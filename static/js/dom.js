@@ -6,9 +6,9 @@ export let dom = {
         init: function () {
             dataHandler.api_get("/get-boards", dom.init.initCallback);
         },
-        initCallback: function (data) {
+        initCallback: function (boards) {
 
-            for (let board of data) {
+            for (let board of boards) {
 
                 let boards = document.getElementById("accordion");
                 let boardElement = dom.render.boardElement(board["title"]);
@@ -80,22 +80,32 @@ export let dom = {
                 document.getElementById("board-title-input").value = "";
             });
         },
-        addRenameEvents:
-            function () {
-                let boards = document.querySelectorAll(".board");
-                for (let board of boards) {
-                    board.addEventListener("click", function () {
-                        if (event.target.classList.contains("board-title")) {
-                            let input = document.createElement("input");
-                            input.value = event.target.textContent;
-                            console.log(input);
-                            let old = event.target;
-                            event.currentTarget.replaceChild(input, old);
-                            console.log(event.target)
-                        }
-                    })
-                }
+        addRenameEvents: function () {
+            let boards = document.querySelectorAll(".board-header");
+            for (let board of boards) {
+                board.addEventListener("click", dom.board.editBoardTitle)
             }
+        },
+        editBoardTitle: function () {
+            if (event.target.classList.contains("board-title")) {
+                let input = document.createElement("input");
+                input.value = event.target.textContent;
+                event.currentTarget.replaceChild(input, event.target);
+                input.focus();
+                input.addEventListener("blur", dom.board.saveBoardTitle)
+            }
+        },
+        saveBoardTitle: function () {
+            let span = document.createElement("span");
+            let input = document.querySelector("input");
+            span.textContent = event.currentTarget.value;
+
+            let title = event.currentTarget.value;
+            let id = event.currentTarget.parentNode.querySelector('#new-card').dataset.boardId;
+            dataHandler.api_post("/update-board-title", {"title": title, "id": id});
+            span.classList.add('board-title');
+            input.parentNode.replaceChild(span, input)
+        }
     },
     card: {
 
@@ -174,7 +184,7 @@ export let dom = {
     render: {
         boardElement: function (title) {
             return `<div class="board">
-                        <div class="card-header" id="headingOne">
+                        <div class="board-header">
                             <span class="board-title">${title}</span>
                             <button class="btn btn-link"
                                     id="collapse-button" 

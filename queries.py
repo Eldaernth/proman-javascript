@@ -128,3 +128,16 @@ def update_card_orders(cursor, board_id, status_id):
         """, {"board_id": board_id,
               "status_id": status_id}
     )
+
+
+@connection.connection_handler
+def update_board_title(cursor, title, id):
+    cursor.execute(
+        """
+        UPDATE boards
+        SET title = %(title)s
+        WHERE id = %(id)s
+        """, {"id": id,
+              "title": title}
+    )
+

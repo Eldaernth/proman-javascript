@@ -67,6 +67,14 @@ def update_card_status():
     return jsonify({"result": "OK"})
 
 
+@app.route("/update-board-title", methods=["POST"])
+def update_board_title():
+    board = request.get_json()
+    print(board)
+    queries.update_board_title(board["title"], board["id"])
+    return jsonify({"result": "OK"})
+
+
 def main():
     app.run(debug=True)
     
