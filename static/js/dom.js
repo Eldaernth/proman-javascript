@@ -27,6 +27,7 @@ export let dom = {
                 dom.dragAndDrop.createDndElements();
                 dom.board.clearCreateBoardInput();
             }
+            dom.board.addRenameEvents();
         }
     },
     board: {
@@ -78,8 +79,23 @@ export let dom = {
             newBoardButton.addEventListener("click", function () {
                 document.getElementById("board-title-input").value = "";
             });
-        }
-
+        },
+        addRenameEvents:
+            function () {
+                let boards = document.querySelectorAll(".board");
+                for (let board of boards) {
+                    board.addEventListener("click", function () {
+                        if (event.target.classList.contains("board-title")) {
+                            let input = document.createElement("input");
+                            input.value = event.target.textContent;
+                            console.log(input);
+                            let old = event.target;
+                            event.currentTarget.replaceChild(input, old);
+                            console.log(event.target)
+                        }
+                    })
+                }
+            }
     },
     card: {
 
@@ -157,7 +173,7 @@ export let dom = {
     },
     render: {
         boardElement: function (title) {
-            return `<div class="card">
+            return `<div class="board">
                         <div class="card-header" id="headingOne">
                             <span class="board-title">${title}</span>
                             <button class="btn btn-link"
