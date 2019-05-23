@@ -39,6 +39,8 @@ export let dom = {
                 let boardElement = dom.render.boardElement(boardTitleInput.value);
                 let boards = document.getElementById("accordion");
                 boards.insertAdjacentHTML("afterbegin", boardElement);
+                let board = document.querySelector(".board-header");
+                board.addEventListener("click", dom.board.editBoardTitle);
                 dataHandler.api_post("/add-board", {"title": boardTitleInput.value}, dom.board.createBoardCallback);
                 dom.dragAndDrop.createDndElements()
             });
